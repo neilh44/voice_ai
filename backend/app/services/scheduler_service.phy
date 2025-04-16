@@ -1,0 +1,66 @@
+from datetime import datetime, timedelta
+from typing import List, Dict, Any
+from app.models.scheduling import Appointment, SchedulingConfig
+from app.db.crud import get_scheduling_config, save_appointment
+
+class SchedulerService:
+    def __init__(self, user_id: str, config_id: str = None):
+        self.user_id = user_id
+        self.config_id = config_id
+        
+        # Get scheduling configuration
+        self.config = get_scheduling_config(user_id, config_id) if config_id else None
+    
+    def get_available_slots(self, start_date: datetime, end_date: datetime) -> List[Dict[str, Any]]:
+        """
+        Get available appointment slots between start and end dates
+        """
+        # Implementation would query available slots
+        pass
+    
+    def check_availability(self, desired_time: datetime, duration: int = 30) -> bool:
+        """
+        Check if a specific time is available
+        """
+        # Implementation would check against calendar
+        pass
+    
+    def create_appointment(self, customer_name: str, phone: str, 
+                            time: datetime, duration: int = 30, 
+                            notes: str = None) -> Appointment:
+        """
+        Create a new appointment
+        """
+        # Check availability first
+        if not self.check_availability(time, duration):
+            raise ValueError("The requested time is not available")
+        
+        # Create appointment
+        appointment_id = save_appointment(
+            user_id=self.user_id,
+            customer_name=customer_name,
+            phone=phone,
+            time=time,
+            duration=duration,
+            notes=notes
+        )
+        
+        # Implementation would also sync with external calendar
+        
+        # Return appointment details
+        return Appointment(
+            id=appointment_id,
+            customer_name=customer_name,
+            phone=phone,
+            time=time,
+            duration=duration,
+            notes=notes
+        )
+    
+    def extract_scheduling_info(self, conversation_text: str) -> Dict[str, Any]:
+        """
+        Extract scheduling information from conversation text
+        """
+        # This might use NLP or the LLM to extract names, times, etc.
+        # Implementation would extract key information
+        pass
